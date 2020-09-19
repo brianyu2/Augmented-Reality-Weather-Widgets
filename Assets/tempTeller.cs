@@ -5,6 +5,10 @@ using System.Collections;
 using TMPro;
 using System.Net;
 
+/**
+ * The tempTeller class is used to print and display the current temperature and humidity levels.
+ * - Created by Brian Yu
+ */
 public class tempTeller : MonoBehaviour
 {
     public GameObject weatherTextObject;
@@ -13,11 +17,12 @@ public class tempTeller : MonoBehaviour
     public GameObject mercury;
     public GameObject water;
 
+    // URL for openweather api
     string url = "http://api.openweathermap.org/data/2.5/weather?lat=41.88&lon=-87.6&APPID=77336270cbb2a677ea2c04d0c7e754b5&units=imperial";
     string tempText = "";
     string humidityText = "";
 
-    bool once = true;
+    bool once = true; // Prevents double scaling values
     void Start()
     {
         // wait a couple seconds to start and then refresh every 900 seconds
@@ -29,7 +34,6 @@ public class tempTeller : MonoBehaviour
 
     void GetDataFromWeb()
     {
-
         StartCoroutine(GetRequest(url));
     }
 
@@ -40,7 +44,6 @@ public class tempTeller : MonoBehaviour
             // Request and wait for the desired page.
             yield return webRequest.SendWebRequest();
 
-
             if (webRequest.isNetworkError)
             {
                 Debug.Log(": Error: " + webRequest.error);
@@ -50,9 +53,9 @@ public class tempTeller : MonoBehaviour
                 // print out the weather data to make sure it makes sense
                 Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
                 string jsonText = webRequest.downloadHandler.text;
+                // Handle the JSON data into resonable inputs
                 int start = jsonText.IndexOf("temp");
                 tempText = jsonText.Substring(start + 6, 4);
-
                 int start2 = jsonText.IndexOf("humidity");
                 humidityText = jsonText.Substring(start2 + 10, 2);
             }
@@ -63,16 +66,18 @@ public class tempTeller : MonoBehaviour
     {
         if (once)
         {
-            Vector3 positionChange = new Vector3(mercury.transform.position.x, mercury.transform.position.y - ((100-float.Parse(tempText)) / 100) * 0.04f, mercury.transform.position.z);
+            // Change the position and scale of the mercury in the thermometer
+            Vector3 positionChange = new Vector3(mercury.transform.position.x, mercury.transform.position.y - ((100 - float.Parse(tempText)) / 100) * 0.04f, mercury.transform.position.z);
             Vector3 scaleChange = new Vector3(0.005f, (float.Parse(tempText) / 100) * 0.04f, 0.005f);
             mercury.transform.position = positionChange;
             mercury.transform.localScale = scaleChange;
-            Vector3 positionChangeWater = new Vector3(water.transform.position.x, water.transform.position.y - ((100-float.Parse(humidityText))/100) * 0.02f, water.transform.position.z);
-            Vector3 scaleChangeWater = new Vector3(0.035f, (float.Parse(humidityText)/100) * 0.02f, 0.035f);
+            // Change the position and scale of the water in the beaker
+            Vector3 positionChangeWater = new Vector3(water.transform.position.x, water.transform.position.y - ((100 - float.Parse(humidityText)) / 100) * 0.02f, water.transform.position.z);
+            Vector3 scaleChangeWater = new Vector3(0.035f, (float.Parse(humidityText) / 100) * 0.02f, 0.035f);
             water.transform.position = positionChangeWater;
             water.transform.localScale = scaleChangeWater;
         }
-        once = false;
+        once = false; // Prevents double scaling values
         weatherTextObject2.GetComponent<TextMeshPro>().text = humidityText + "%";
         weatherTextObject.GetComponent<TextMeshPro>().text = tempText + " F";
     }

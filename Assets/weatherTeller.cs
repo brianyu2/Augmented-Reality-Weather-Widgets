@@ -4,12 +4,14 @@ using System.Collections;
 using TMPro;
 using System.Net;
 
+/**
+ * The weatherTeller class is used to print and display the current weather status.
+ * - Created by Brian Yu
+ */
 public class weatherTeller : MonoBehaviour
 {
+    // Each game object for different weather scenarios
     public GameObject weatherTextObject;
-    public GameObject location;
-    public GameObject locationRain;
-
     public GameObject sunObject;
     public GameObject cloudObject1;
     public GameObject cloudObject2;
@@ -18,15 +20,20 @@ public class weatherTeller : MonoBehaviour
     public GameObject snowObject;
     public GameObject rainObject;
     public GameObject lightningObject;
+
+    // Audio sources for different weather
     public AudioSource rain;
     public AudioSource thunder;
     public AudioSource clear;
+
+    // Values for debug testing
     public int testDebugValue = 0;
     public float keyDelay = 0.03f;
     private float timePassed = 0f;
-    public bool debugWeather = true; // Use this to debug the weather
+    public bool debugWeather = true; // Use this to choose whether to debug the weather
 
     string weatherText = "";
+    // URL for openweather api
     string url = "http://api.openweathermap.org/data/2.5/weather?lat=41.88&lon=-87.6&APPID=77336270cbb2a677ea2c04d0c7e754b5&units=imperial";
 
     void Start()
@@ -36,6 +43,7 @@ public class weatherTeller : MonoBehaviour
         InvokeRepeating("GetDataFromWeb", 2f, 900f);
         InvokeRepeating("UpdateTime", 0f, 10f);
 
+        // Hide all game objects until necessary to display
         sunObject.SetActive(false);
         cloudObject1.SetActive(false);
         cloudObject2.SetActive(false);
@@ -59,7 +67,6 @@ public class weatherTeller : MonoBehaviour
             // Request and wait for the desired page.
             yield return webRequest.SendWebRequest();
 
-
             if (webRequest.isNetworkError)
             {
                 Debug.Log(": Error: " + webRequest.error);
@@ -69,13 +76,14 @@ public class weatherTeller : MonoBehaviour
                 // print out the weather data to make sure it makes sense
                 Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
                 string jsonText = webRequest.downloadHandler.text;
+                // Handle the JSON data into resonable inputs
                 int start = jsonText.IndexOf("icon");
                 weatherText = jsonText.Substring(start + 7, 2);
-                Debug.Log(weatherText);
             }
         }
     }
 
+    // This version of update used to handle debugging
     void Update()
     {
         timePassed += Time.deltaTime;
@@ -108,9 +116,14 @@ public class weatherTeller : MonoBehaviour
     void UpdateTime()
     {
         weatherTextObject.GetComponent<TextMeshPro>().text = weatherText;
+        // Stop all audio sources to prevent double playing audio
         clear.Stop();
         thunder.Stop();
         rain.Stop();
+        // Switch statement for each weather condition
+        // Note set everything to inactive except the ones that display the correct weather.
+        // Also displays extra text to show the weather
+        // Plays sound for each part that are necessary
         switch (weatherText)
         {
             case "01":

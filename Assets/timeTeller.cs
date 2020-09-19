@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
+/**
+ * The timeTeller class is used to print the current time.
+ * - Created by Brian Yu
+ */
+
 public class timeTeller : MonoBehaviour
 {
     public GameObject timeTextObject;
@@ -16,7 +21,7 @@ public class timeTeller : MonoBehaviour
     // Update is called once per frame
     void UpdateTime()
     {
+        // Prints the current time in h:mm tt format
         timeTextObject.GetComponent<TextMeshPro>().text = System.DateTime.Now.ToString("h:mm tt");
-
     }
 }

@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
+/**
+ * The dateTeller class is used to print the current date.
+ */
+
 public class dateTeller : MonoBehaviour
 {
     public GameObject timeTextObject;
@@ -16,7 +20,7 @@ public class dateTeller : MonoBehaviour
     // Update is called once per frame
     void UpdateTime()
     {
+        // Print Date in MM/dd/yyyy format
         timeTextObject.GetComponent<TextMeshPro>().text = System.DateTime.Now.ToString("MM/dd/yyyy");
-
     }
 }
