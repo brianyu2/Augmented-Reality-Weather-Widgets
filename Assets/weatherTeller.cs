@@ -28,7 +28,7 @@ public class weatherTeller : MonoBehaviour
 
     // Values for debug testing
     public int testDebugValue = 0;
-    public float keyDelay = 0.03f;
+    public float keyDelay = 0.03f; // Note: this is buggy
     private float timePassed = 0f;
     public bool debugWeather = true; // Use this to choose whether to debug the weather
 
@@ -87,12 +87,17 @@ public class weatherTeller : MonoBehaviour
     void Update()
     {
         timePassed += Time.deltaTime;
+        // Array to hold all possible weather conditions
         var weatherDebugArr = new string[] { "01", "02", "03", "04", "09", "10", "11", "13", "50" };
+        // Rotate objects for motion
         sunObject.transform.Rotate(0, 0, 50 * Time.deltaTime);
         snowObject.transform.Rotate(0, 0, 50 * Time.deltaTime);
+        // Debug way with arrow keys, note, current implementation requires multiple presses that might not work.
+        // This is because without the conditions below, it will overflow or underflow when holding down.
         if (debugWeather && timePassed >= keyDelay)
         {
             weatherText = weatherDebugArr[testDebugValue];
+            // Used to loop back to start
             if (Input.GetKey("right"))
             {
                 testDebugValue++;
@@ -101,6 +106,7 @@ public class weatherTeller : MonoBehaviour
                     testDebugValue = 0;
                 }
             }
+            // Used to loop to end
             if (Input.GetKey("left"))
             {
                 testDebugValue--;
@@ -109,6 +115,7 @@ public class weatherTeller : MonoBehaviour
                     testDebugValue = 8;
                 }
             }
+            // Reset timer to prevent passing multiple at the same time.
             timePassed = 0f;
         }
     }
@@ -127,6 +134,7 @@ public class weatherTeller : MonoBehaviour
         switch (weatherText)
         {
             case "01":
+                // Clear Skies condition
                 cloudObject1.SetActive(false);
                 cloudObject2.SetActive(false);
                 cloudObject3.SetActive(false);
@@ -139,6 +147,7 @@ public class weatherTeller : MonoBehaviour
                 clear.Play();
                 break;
             case "02":
+                // Few Clouds condition
                 cloudObject2.SetActive(false);
                 cloudObject3.SetActive(false);
                 cloudObject4.SetActive(false);
@@ -151,6 +160,7 @@ public class weatherTeller : MonoBehaviour
                 clear.Play();
                 break;
             case "03":
+                // Scattered Clouds condition
                 cloudObject1.SetActive(false);
                 cloudObject3.SetActive(false);
                 cloudObject4.SetActive(false);
@@ -163,6 +173,7 @@ public class weatherTeller : MonoBehaviour
                 clear.Play();
                 break;
             case "04":
+                // Broken Clouds condition
                 cloudObject1.SetActive(false);
                 cloudObject2.SetActive(false);
                 cloudObject4.SetActive(false);
@@ -175,6 +186,7 @@ public class weatherTeller : MonoBehaviour
                 clear.Play();
                 break;
             case "09":
+                // Shower Rain condition
                 sunObject.SetActive(false);
                 cloudObject1.SetActive(false);
                 cloudObject2.SetActive(false);
@@ -187,6 +199,7 @@ public class weatherTeller : MonoBehaviour
                 rain.Play();
                 break;
             case "10":
+                // Rain condition
                 sunObject.SetActive(false);
                 cloudObject1.SetActive(false);
                 cloudObject2.SetActive(false);
@@ -199,6 +212,7 @@ public class weatherTeller : MonoBehaviour
                 rain.Play();
                 break;
             case "11":
+                // Thunderstorm condition
                 thunder.Play();
                 sunObject.SetActive(false);
                 cloudObject1.SetActive(false);
@@ -211,6 +225,7 @@ public class weatherTeller : MonoBehaviour
                 lightningObject.SetActive(true);
                 break;
             case "13":
+                // Snow condition
                 sunObject.SetActive(false);
                 cloudObject1.SetActive(false);
                 cloudObject2.SetActive(false);
@@ -222,6 +237,7 @@ public class weatherTeller : MonoBehaviour
                 snowObject.SetActive(true);
                 break;
             case "50":
+                // Mist condition
                 sunObject.SetActive(false);
                 cloudObject4.SetActive(false);
                 snowObject.SetActive(false);
