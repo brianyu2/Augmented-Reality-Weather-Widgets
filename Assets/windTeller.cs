@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
+using System;
 using System.Collections;
 using TMPro;
 using System.Net;
@@ -7,8 +8,12 @@ using System.Net;
 public class windTeller : MonoBehaviour
 {
     public GameObject weatherTextObject;
+    public GameObject windStaff;
+
     string url = "http://api.openweathermap.org/data/2.5/weather?lat=41.88&lon=-87.6&APPID=77336270cbb2a677ea2c04d0c7e754b5&units=imperial";
-    string tempText = "";
+    string windSpeedText = "";
+    string windDegText = "";
+    bool once = true;
 
     void Start()
     {
@@ -17,7 +22,6 @@ public class windTeller : MonoBehaviour
 
         InvokeRepeating("GetDataFromWeb", 2f, 900f);
         InvokeRepeating("UpdateTime", 0f, 10f);
-
     }
 
     void GetDataFromWeb()
@@ -44,13 +48,20 @@ public class windTeller : MonoBehaviour
                 Debug.Log(":\nReceived: " + webRequest.downloadHandler.text);
                 string jsonText = webRequest.downloadHandler.text;
                 int start = jsonText.IndexOf("wind");
-                tempText = jsonText.Substring(start + 15, 3);
+                windSpeedText = jsonText.Substring(start + 15, 4);
+                int start2 = jsonText.IndexOf("deg");
+                windDegText = jsonText.Substring(start2 + 5, 3);
             }
         }
     }
 
     void UpdateTime()
     {
-        weatherTextObject.GetComponent<TextMeshPro>().text = tempText + " mph";
+        if (once)
+        {
+            windStaff.transform.Rotate(0, float.Parse(windDegText), 0);
+        }
+        once = false;
+        weatherTextObject.GetComponent<TextMeshPro>().text = windSpeedText + " mph, " + windDegText + " deg";
     }
 }
